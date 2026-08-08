@@ -1,5 +1,5 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { ArrowLeftIcon, CheckCircleIcon, PlayCircleIcon } from '@heroicons/react/24/solid'
+import { ArrowLeftIcon, CheckCircleIcon, PlayCircleIcon, StarIcon } from '@heroicons/react/24/solid'
 import { getTopic } from '../data/topics'
 import { loadProgress } from '../lib/progress'
 
@@ -12,7 +12,7 @@ export default function TopicPage() {
   const progress = loadProgress()
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 pb-16 pt-6">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 pb-16 pt-6 lg:max-w-3xl">
       <div className="flex items-center gap-3">
         <Link
           to="/"
@@ -30,6 +30,8 @@ export default function TopicPage() {
         {topic.lessons.map((lesson) => {
           const lp = progress.lessons[lesson.id]
           const completed = lp?.completed ?? false
+          const inProgress = !completed && (lp?.completedScreens ?? 0) > 0
+          const hasBadge = progress.badges.includes(lesson.id)
           return (
             <Link
               key={lesson.id}
@@ -42,10 +44,18 @@ export default function TopicPage() {
                 <PlayCircleIcon className="h-9 w-9 shrink-0 text-chalk-600" />
               )}
               <div className="min-w-0 flex-1">
-                <h3 className="font-display font-bold text-wood-800">{lesson.title}</h3>
+                <div className="flex items-center gap-1.5">
+                  <h3 className="font-display font-bold text-wood-800">{lesson.title}</h3>
+                  {hasBadge && <StarIcon className="h-4 w-4 shrink-0 text-amber-500" />}
+                </div>
                 <p className="truncate text-sm font-medium text-wood-500">
                   {lesson.description}
                 </p>
+                {inProgress && (
+                  <span className="mt-1 inline-block rounded-full bg-chalk-100 px-2 py-0.5 text-xs font-bold text-chalk-700">
+                    Continuar de onde parou
+                  </span>
+                )}
               </div>
             </Link>
           )

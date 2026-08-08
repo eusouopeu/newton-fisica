@@ -10,6 +10,7 @@ export interface ProgressState {
   lessons: Record<string, LessonProgress>
   lastActiveDate: string | null
   streak: number
+  badges: string[]
 }
 
 function todayISO(): string {
@@ -17,7 +18,7 @@ function todayISO(): string {
 }
 
 function defaultState(): ProgressState {
-  return { lessons: {}, lastActiveDate: null, streak: 0 }
+  return { lessons: {}, lastActiveDate: null, streak: 0, badges: [] }
 }
 
 export function loadProgress(): ProgressState {
@@ -70,4 +71,17 @@ export function updateLessonProgress(
 
 export function getLessonProgress(lessonId: string): LessonProgress | undefined {
   return loadProgress().lessons[lessonId]
+}
+
+/** Medalha concedida quando o quiz de uma lição é concluído sem nenhuma resposta errada. */
+export function awardPerfectBadge(lessonId: string): ProgressState {
+  const state = loadProgress()
+  if (state.badges.includes(lessonId)) return state
+  const next: ProgressState = { ...state, badges: [...state.badges, lessonId] }
+  saveProgress(next)
+  return next
+}
+
+export function hasPerfectBadge(lessonId: string): boolean {
+  return loadProgress().badges.includes(lessonId)
 }

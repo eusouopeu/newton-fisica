@@ -6,6 +6,8 @@ interface SliderProps {
   step?: number
   unit?: string
   onChange: (value: number) => void
+  /** Disparado quando o usuário começa a interagir (útil para capturar um "antes" para curva-fantasma). */
+  onDragStart?: () => void
 }
 
 export default function Slider({
@@ -16,6 +18,7 @@ export default function Slider({
   step = 0.1,
   unit = '',
   onChange,
+  onDragStart,
 }: SliderProps) {
   const pct = ((value - min) / (max - min)) * 100
 
@@ -34,6 +37,7 @@ export default function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
+        onPointerDown={onDragStart}
         className="slider-track h-2.5 w-full cursor-pointer appearance-none rounded-full"
         style={{
           background: `linear-gradient(to right, var(--color-chalk-500) ${pct}%, var(--color-paper-300) ${pct}%)`,

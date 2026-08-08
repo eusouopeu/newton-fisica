@@ -2,6 +2,9 @@ import type { Topic } from '../../types'
 import { mruTopic } from './mru'
 import { mruvTopic } from './mruv'
 import { leisNewtonTopic } from './leis-newton'
+import { forcasVetoresTopic } from './forcas-vetores'
+import { planoInclinadoTopic } from './plano-inclinado'
+import { atritoTopic } from './atrito'
 
 const comingSoon: Topic[] = [
   {
@@ -13,39 +16,15 @@ const comingSoon: Topic[] = [
     available: false,
     lessons: [],
   },
-  {
-    id: 'forcas-vetores',
-    title: 'Forças e Vetores',
-    subject: 'Dinâmica',
-    description: 'Composição e decomposição de forças.',
-    icon: 'arrows-pointing-out',
-    available: false,
-    lessons: [],
-  },
-  {
-    id: 'plano-inclinado',
-    title: 'Plano Inclinado',
-    subject: 'Dinâmica',
-    description: 'Componentes da gravidade em superfícies inclinadas.',
-    icon: 'triangle',
-    available: false,
-    lessons: [],
-  },
-  {
-    id: 'atrito',
-    title: 'Atrito',
-    subject: 'Dinâmica',
-    description: 'Atrito estático e cinético.',
-    icon: 'hand-raised',
-    available: false,
-    lessons: [],
-  },
 ]
 
 export const topics: Topic[] = [
   mruTopic,
   mruvTopic,
   leisNewtonTopic,
+  forcasVetoresTopic,
+  planoInclinadoTopic,
+  atritoTopic,
   ...comingSoon,
 ]
 

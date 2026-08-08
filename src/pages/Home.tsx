@@ -1,12 +1,21 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { FireIcon, LockClosedIcon, TrophyIcon } from '@heroicons/react/24/solid'
+import {
+  FireIcon,
+  LockClosedIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
+  StarIcon,
+  TrophyIcon,
+} from '@heroicons/react/24/solid'
 import { topics } from '../data/topics'
 import { loadProgress, type ProgressState } from '../lib/progress'
+import { loadSettings, toggleSound, type Settings } from '../lib/settings'
 import TopicIcon from '../components/TopicIcon'
 
 export default function Home() {
   const [progress, setProgress] = useState<ProgressState>(() => loadProgress())
+  const [settings, setSettings] = useState<Settings>(() => loadSettings())
 
   useEffect(() => {
     setProgress(loadProgress())
@@ -16,13 +25,28 @@ export default function Home() {
   const totalLessons = topics.flatMap((t) => t.lessons).length
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-7 px-4 pb-16 pt-8">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-7 px-4 pb-16 pt-8 lg:max-w-3xl">
       <header className="flex items-center justify-between rounded-3xl border-2 border-chalk-700 bg-chalk-600 px-5 py-4 shadow-[0_4px_0_0_var(--color-chalk-800)]">
         <div>
           <h1 className="font-display text-3xl font-extrabold text-white">Newton</h1>
           <p className="text-sm font-semibold text-chalk-100">Física por simulação</p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSettings(toggleSound())}
+            aria-label={settings.soundEnabled ? 'Desativar som' : 'Ativar som'}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-chalk-700 text-chalk-100 hover:bg-chalk-800"
+          >
+            {settings.soundEnabled ? (
+              <SpeakerWaveIcon className="h-5 w-5" />
+            ) : (
+              <SpeakerXMarkIcon className="h-5 w-5" />
+            )}
+          </button>
+          <div className="flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5 text-amber-700 shadow-[0_2px_0_0_#fcd34d]">
+            <StarIcon className="h-5 w-5 text-amber-500" />
+            <span className="font-display font-bold">{progress.badges.length}</span>
+          </div>
           <div className="flex items-center gap-1.5 rounded-full bg-wood-100 px-3 py-1.5 text-wood-700 shadow-[0_2px_0_0_var(--color-wood-300)]">
             <FireIcon className="h-5 w-5 text-orange-500" />
             <span className="font-display font-bold">{progress.streak}</span>
@@ -41,7 +65,7 @@ export default function Home() {
           <h2 className="font-display text-sm font-bold uppercase tracking-wide text-wood-500">
             {subject}
           </h2>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:gap-4">
             {topics
               .filter((t) => t.subject === subject)
               .map((topic) => {
@@ -53,6 +77,7 @@ export default function Home() {
                     )
                   : 0
                 const isComplete = lessonProgress?.completed ?? false
+                const hasBadge = lesson ? progress.badges.includes(lesson.id) : false
 
                 const content = (
                   <div
@@ -82,6 +107,7 @@ export default function Home() {
                         >
                           {topic.title}
                         </h3>
+                        {hasBadge && <StarIcon className="h-4 w-4 shrink-0 text-amber-500" />}
                         {!topic.available && (
                           <LockClosedIcon className="h-3.5 w-3.5 text-paper-400" />
                         )}

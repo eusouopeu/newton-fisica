@@ -1,24 +1,56 @@
 import { useState } from 'react'
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid'
 import type { QuizScreen } from '../../types'
+import { playCorrect, playIncorrect } from '../../lib/sound'
+import { hapticError, hapticSuccess } from '../../lib/haptics'
+
+export interface WrongQuizAnswer {
+  prompt: string
+  chosenLabel: string
+  correctLabel: string
+  explanation: string
+}
 
 interface Props {
   screen: QuizScreen
-  onNext: () => void
+  onNext: (wrongAnswers: WrongQuizAnswer[]) => void
 }
 
 export default function QuizScreenView({ screen, onNext }: Props) {
   const [index, setIndex] = useState(0)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [wrongAnswers, setWrongAnswers] = useState<WrongQuizAnswer[]>([])
 
   const question = screen.questions[index]
   const isLast = index === screen.questions.length - 1
   const selected = question.options.find((o) => o.id === selectedId)
 
+  function handleSelect(optionId: string) {
+    setSelectedId(optionId)
+    const option = question.options.find((o) => o.id === optionId)
+    if (option?.correct) {
+      void playCorrect()
+      void hapticSuccess()
+    } else {
+      void playIncorrect()
+      void hapticError()
+      const correctOption = question.options.find((o) => o.correct)
+      setWrongAnswers((prev) => [
+        ...prev,
+        {
+          prompt: question.prompt,
+          chosenLabel: option?.label ?? '',
+          correctLabel: correctOption?.label ?? '',
+          explanation: question.explanation,
+        },
+      ])
+    }
+  }
+
   function handleContinue() {
     if (!selected) return
     if (isLast) {
-      onNext()
+      onNext(wrongAnswers)
     } else {
       setIndex((i) => i + 1)
       setSelectedId(null)
@@ -41,7 +73,7 @@ export default function QuizScreenView({ screen, onNext }: Props) {
           return (
             <button
               key={option.id}
-              onClick={() => setSelectedId(option.id)}
+              onClick={() => handleSelect(option.id)}
               disabled={selectedId !== null}
               className={`flex items-center justify-between rounded-2xl border-2 px-4 py-3.5 text-left font-semibold transition ${
                 showState
