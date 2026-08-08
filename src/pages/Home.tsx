@@ -16,20 +16,20 @@ export default function Home() {
   const totalLessons = topics.flatMap((t) => t.lessons).length
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 pb-16 pt-8">
-      <header className="flex items-center justify-between">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-7 px-4 pb-16 pt-8">
+      <header className="flex items-center justify-between rounded-3xl border-2 border-chalk-700 bg-chalk-600 px-5 py-4 shadow-[0_4px_0_0_var(--color-chalk-800)]">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Newton</h1>
-          <p className="text-sm text-slate-500">Física por simulação</p>
+          <h1 className="font-display text-3xl font-extrabold text-white">Newton</h1>
+          <p className="text-sm font-semibold text-chalk-100">Física por simulação</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1.5 text-orange-700">
-            <FireIcon className="h-5 w-5" />
-            <span className="font-semibold">{progress.streak}</span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 rounded-full bg-wood-100 px-3 py-1.5 text-wood-700 shadow-[0_2px_0_0_var(--color-wood-300)]">
+            <FireIcon className="h-5 w-5 text-orange-500" />
+            <span className="font-display font-bold">{progress.streak}</span>
           </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1.5 text-sky-700">
-            <TrophyIcon className="h-5 w-5" />
-            <span className="font-semibold">
+          <div className="flex items-center gap-1.5 rounded-full bg-paper-50 px-3 py-1.5 text-chalk-700 shadow-[0_2px_0_0_var(--color-paper-300)]">
+            <TrophyIcon className="h-5 w-5 text-amber-500" />
+            <span className="font-display font-bold">
               {completedLessons}/{totalLessons}
             </span>
           </div>
@@ -38,7 +38,7 @@ export default function Home() {
 
       {(['Cinemática', 'Dinâmica'] as const).map((subject) => (
         <section key={subject} className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+          <h2 className="font-display text-sm font-bold uppercase tracking-wide text-wood-500">
             {subject}
           </h2>
           <div className="flex flex-col gap-3">
@@ -52,18 +52,23 @@ export default function Home() {
                       (lessonProgress.completedScreens / lessonProgress.totalScreens) * 100,
                     )
                   : 0
+                const isComplete = lessonProgress?.completed ?? false
 
                 const content = (
                   <div
-                    className={`flex items-center gap-4 rounded-2xl border p-4 transition ${
+                    className={`flex items-center gap-4 rounded-2xl border-2 p-4 transition ${
                       topic.available
-                        ? 'border-slate-200 bg-white hover:border-sky-300 hover:shadow-sm'
-                        : 'border-slate-100 bg-slate-50'
+                        ? 'border-wood-200 bg-white shadow-[0_3px_0_0_var(--color-wood-200)] hover:border-chalk-300 hover:-translate-y-0.5 hover:shadow-[0_5px_0_0_var(--color-chalk-300)]'
+                        : 'border-paper-300 bg-paper-100'
                     }`}
                   >
                     <div
-                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
-                        topic.available ? 'bg-sky-100 text-sky-600' : 'bg-slate-200 text-slate-400'
+                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${
+                        topic.available
+                          ? isComplete
+                            ? 'bg-amber-100 text-amber-600'
+                            : 'bg-chalk-100 text-chalk-600'
+                          : 'bg-paper-300 text-paper-500'
                       }`}
                     >
                       <TopicIcon icon={topic.icon} className="h-6 w-6" />
@@ -71,25 +76,27 @@ export default function Home() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <h3
-                          className={`font-medium ${
-                            topic.available ? 'text-slate-900' : 'text-slate-400'
+                          className={`font-display font-bold ${
+                            topic.available ? 'text-wood-800' : 'text-paper-500'
                           }`}
                         >
                           {topic.title}
                         </h3>
-                        {!topic.available && <LockClosedIcon className="h-3.5 w-3.5 text-slate-300" />}
+                        {!topic.available && (
+                          <LockClosedIcon className="h-3.5 w-3.5 text-paper-400" />
+                        )}
                       </div>
                       <p
-                        className={`truncate text-sm ${
-                          topic.available ? 'text-slate-500' : 'text-slate-300'
+                        className={`truncate text-sm font-medium ${
+                          topic.available ? 'text-wood-500' : 'text-paper-400'
                         }`}
                       >
                         {topic.description}
                       </p>
                       {topic.available && (
-                        <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-paper-200">
                           <div
-                            className="h-full rounded-full bg-sky-500 transition-all"
+                            className="h-full rounded-full bg-chalk-500 transition-all"
                             style={{ width: `${pct}%` }}
                           />
                         </div>

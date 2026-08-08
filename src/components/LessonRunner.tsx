@@ -36,16 +36,16 @@ export default function LessonRunner({ topicId, lesson, onBack }: Props) {
   if (done) {
     return (
       <div className="flex flex-col items-center gap-6 py-16 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-          <CheckBadgeIcon className="h-10 w-10 text-emerald-600" />
+        <div className="flex h-20 w-20 items-center justify-center rounded-3xl border-2 border-chalk-300 bg-chalk-100 shadow-[0_4px_0_0_var(--color-chalk-300)]">
+          <CheckBadgeIcon className="h-12 w-12 text-chalk-600" />
         </div>
-        <h2 className="text-2xl font-semibold text-slate-900">Lição concluída!</h2>
-        <p className="max-w-sm text-slate-600">
+        <h2 className="font-display text-2xl font-bold text-wood-800">Lição concluída!</h2>
+        <p className="max-w-sm text-wood-600">
           Você terminou "{lesson.title}". Continue para o próximo tópico.
         </p>
         <button
           onClick={() => navigate(`/topic/${topicId}`)}
-          className="rounded-full bg-sky-600 px-8 py-3 font-medium text-white shadow-sm transition hover:bg-sky-700 active:scale-95"
+          className="rounded-full bg-chalk-500 px-8 py-3 font-display text-lg font-bold text-white shadow-[0_4px_0_0_var(--color-chalk-700)] transition active:translate-y-1 active:shadow-none"
         >
           Voltar ao tópico
         </button>
@@ -58,7 +58,7 @@ export default function LessonRunner({ topicId, lesson, onBack }: Props) {
       <div className="flex items-center gap-3">
         <button
           onClick={onBack}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-wood-500 hover:bg-wood-100"
           aria-label="Voltar"
         >
           <ArrowLeftIcon className="h-5 w-5" />

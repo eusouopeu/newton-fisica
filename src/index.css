@@ -1,5 +1,75 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Baloo 2";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/baloo-2-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Baloo 2";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/baloo-2-latin-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Baloo 2";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/fonts/baloo-2-latin-800-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Nunito Variable";
+  font-style: normal;
+  font-weight: 200 1000;
+  font-display: swap;
+  src: url("/fonts/nunito-latin-wght-normal.woff2") format("woff2-variations");
+}
+
+@theme {
+  --font-display: "Baloo 2", "Nunito Variable", ui-rounded, system-ui, sans-serif;
+  --font-sans: "Nunito Variable", ui-rounded, system-ui, sans-serif;
+
+  /* Chalkboard green — primary */
+  --color-chalk-50: #eef6f0;
+  --color-chalk-100: #d6ecdc;
+  --color-chalk-200: #aed8ba;
+  --color-chalk-300: #82bf95;
+  --color-chalk-400: #5aa375;
+  --color-chalk-500: #3f8560;
+  --color-chalk-600: #2f6a4b;
+  --color-chalk-700: #26543d;
+  --color-chalk-800: #1f4231;
+  --color-chalk-900: #1a3628;
+
+  /* Chalk paper / beige — surfaces */
+  --color-paper-50: #fefcf8;
+  --color-paper-100: #faf5ea;
+  --color-paper-200: #f3e9d3;
+  --color-paper-300: #e8d7b3;
+  --color-paper-400: #d7bd88;
+  --color-paper-500: #c2a468;
+  --color-paper-600: #a1854f;
+  --color-paper-700: #7d6740;
+  --color-paper-800: #5c4c32;
+  --color-paper-900: #40392a;
+
+  /* Wood brown — accents */
+  --color-wood-50: #faf4ec;
+  --color-wood-100: #f0e0c8;
+  --color-wood-200: #e3c69d;
+  --color-wood-300: #d1a670;
+  --color-wood-400: #b8824a;
+  --color-wood-500: #9c6b3e;
+  --color-wood-600: #7a4f2c;
+  --color-wood-700: #603e23;
+  --color-wood-800: #4a301c;
+  --color-wood-900: #362315;
+}
+
 html, body, #root {
   height: 100%;
 }
@@ -8,4 +78,55 @@ body {
   margin: 0;
   overscroll-behavior-y: none;
   -webkit-tap-highlight-color: transparent;
+  font-family: var(--font-sans);
+  background-color: var(--color-paper-100);
+  color: var(--color-wood-800);
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+}
+
+/* Safe-area (notch / status bar) handling for Capacitor + PWA */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+/* Playful chalky slider thumb */
+.slider-track {
+  -webkit-appearance: none;
+}
+
+.slider-track::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  background: var(--color-chalk-600);
+  border: 3px solid var(--color-paper-50);
+  box-shadow: 0 2px 6px rgba(38, 84, 61, 0.4);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.slider-track::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+}
+
+.slider-track::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  background: var(--color-chalk-600);
+  border: 3px solid var(--color-paper-50);
+  box-shadow: 0 2px 6px rgba(38, 84, 61, 0.4);
+  cursor: pointer;
+}
+
+.slider-track::-moz-range-track {
+  background: transparent;
 }

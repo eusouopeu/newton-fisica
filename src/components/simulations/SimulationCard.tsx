@@ -8,13 +8,11 @@ interface SimulationCardProps {
 
 export default function SimulationCard({ chart, controls, readout }: SimulationCardProps) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="border-b border-slate-100 p-4">{chart}</div>
-      <div className="grid gap-4 p-4 sm:grid-cols-2">{controls}</div>
+    <div className="overflow-hidden rounded-3xl border-2 border-wood-200 bg-paper-50 shadow-[0_4px_0_0_var(--color-wood-200)]">
+      <div className="border-b-2 border-wood-100 bg-white p-4">{chart}</div>
+      <div className="grid gap-5 p-5 sm:grid-cols-2">{controls}</div>
       {readout && (
-        <div className="border-t border-slate-100 bg-slate-50 px-4 py-3 rounded-b-2xl">
-          {readout}
-        </div>
+        <div className="border-t-2 border-wood-100 bg-paper-100 px-5 py-3">{readout}</div>
       )}
     </div>
   )

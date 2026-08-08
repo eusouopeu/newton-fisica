@@ -13,9 +13,16 @@ import Slider from './Slider'
 const DURATION = 5
 const POINTS = 40
 
+// Domínio fixo: pior caso de a·t = (F/m)·t dentro dos limites dos sliders,
+// para a escala do eixo Y não mudar enquanto o usuário arrasta.
+const MASS_RANGE: [number, number] = [2, 10]
+const FORCE_RANGE: [number, number] = [2, 20]
+const Y_DOMAIN: [number, number] = [0, 55]
+const Y_TICKS = [0, 10, 20, 30, 40, 50]
+
 export default function NewtonSecondLaw() {
-  const [mass, setMass] = useState(4)
-  const [force, setForce] = useState(8)
+  const [mass, setMass] = useState(3)
+  const [force, setForce] = useState(15)
 
   const acceleration = force / mass
 
@@ -32,32 +39,33 @@ export default function NewtonSecondLaw() {
   const arrowLength = 20 + force * 4.5
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="border-b border-slate-100 p-4">
+    <div className="overflow-hidden rounded-3xl border-2 border-wood-200 bg-paper-50 shadow-[0_4px_0_0_var(--color-wood-200)]">
+      <div className="border-b-2 border-wood-100 bg-white p-4">
         <div className="flex h-24 items-center justify-center gap-1 overflow-x-auto">
           <svg
             width={Math.max(260, boxSize + arrowLength + 60)}
             height={110}
             viewBox={`0 0 ${Math.max(260, boxSize + arrowLength + 60)} 110`}
           >
-            <line x1="0" y1="90" x2="100%" y2="90" stroke="#e2e8f0" strokeWidth={2} />
+            <line x1="0" y1="90" x2="100%" y2="90" stroke="#e3c69d" strokeWidth={3} />
             <rect
               x={20}
               y={90 - boxSize}
               width={boxSize}
               height={boxSize}
-              rx={6}
-              fill="#e0f2fe"
-              stroke="#0284c7"
-              strokeWidth={2}
+              rx={8}
+              fill="#f0e0c8"
+              stroke="#7a4f2c"
+              strokeWidth={2.5}
             />
             <text
               x={20 + boxSize / 2}
               y={90 - boxSize / 2 + 5}
               textAnchor="middle"
               fontSize={12}
-              fill="#0369a1"
-              fontFamily="monospace"
+              fill="#603e23"
+              fontFamily="Nunito Variable, sans-serif"
+              fontWeight={700}
             >
               {mass}kg
             </text>
@@ -66,8 +74,8 @@ export default function NewtonSecondLaw() {
               y1={90 - boxSize / 2}
               x2={20 + boxSize + arrowLength}
               y2={90 - boxSize / 2}
-              stroke="#dc2626"
-              strokeWidth={3}
+              stroke="#c0392b"
+              strokeWidth={3.5}
               markerEnd="url(#arrowhead)"
             />
             <text
@@ -75,8 +83,9 @@ export default function NewtonSecondLaw() {
               y={90 - boxSize / 2 - 10}
               textAnchor="middle"
               fontSize={12}
-              fill="#dc2626"
-              fontFamily="monospace"
+              fill="#c0392b"
+              fontFamily="Nunito Variable, sans-serif"
+              fontWeight={700}
             >
               F = {force}N
             </text>
@@ -89,38 +98,48 @@ export default function NewtonSecondLaw() {
                 refY="4"
                 orient="auto"
               >
-                <path d="M0,0 L8,4 L0,8 Z" fill="#dc2626" />
+                <path d="M0,0 L8,4 L0,8 Z" fill="#c0392b" />
               </marker>
             </defs>
           </svg>
         </div>
       </div>
 
-      <div className="border-b border-slate-100 p-4">
+      <div className="border-b-2 border-wood-100 bg-white p-4">
         <div className="h-56 w-full sm:h-64">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e8dcc3" />
               <XAxis
                 dataKey="t"
+                type="number"
+                domain={[0, DURATION]}
                 label={{ value: 't (s)', position: 'insideBottomRight', offset: -4 }}
-                stroke="#64748b"
+                stroke="#7d6740"
                 fontSize={12}
               />
               <YAxis
+                domain={Y_DOMAIN}
+                ticks={Y_TICKS}
+                allowDataOverflow
                 label={{ value: 'v (m/s)', angle: -90, position: 'insideLeft' }}
-                stroke="#64748b"
+                stroke="#7d6740"
                 fontSize={12}
               />
               <Tooltip
                 formatter={(value) => [`${value} m/s`, 'velocidade']}
                 labelFormatter={(t) => `t = ${t}s`}
+                contentStyle={{
+                  borderRadius: 12,
+                  border: '2px solid #e3c69d',
+                  fontFamily: 'Nunito Variable, sans-serif',
+                }}
               />
               <Line
                 type="monotone"
                 dataKey="v"
-                stroke="#0284c7"
-                strokeWidth={3}
+                stroke="#2f6a4b"
+                strokeWidth={4}
                 dot={false}
                 isAnimationActive={false}
               />
@@ -129,12 +148,12 @@ export default function NewtonSecondLaw() {
         </div>
       </div>
 
-      <div className="grid gap-4 p-4 sm:grid-cols-2">
+      <div className="grid gap-5 p-5 sm:grid-cols-2">
         <Slider
           label="Massa (m)"
           value={mass}
-          min={1}
-          max={20}
+          min={MASS_RANGE[0]}
+          max={MASS_RANGE[1]}
           step={1}
           unit="kg"
           onChange={setMass}
@@ -142,17 +161,17 @@ export default function NewtonSecondLaw() {
         <Slider
           label="Força aplicada (F)"
           value={force}
-          min={0}
-          max={40}
+          min={FORCE_RANGE[0]}
+          max={FORCE_RANGE[1]}
           step={1}
           unit="N"
           onChange={setForce}
         />
       </div>
-      <div className="border-t border-slate-100 bg-slate-50 px-4 py-3 rounded-b-2xl">
-        <p className="font-mono text-sm text-slate-600">
+      <div className="border-t-2 border-wood-100 bg-paper-100 px-5 py-3">
+        <p className="font-mono text-sm font-semibold text-wood-700">
           a = F / m = {force} / {mass} ={' '}
-          <span className="font-semibold text-sky-700">{acceleration.toFixed(2)} m/s²</span>
+          <span className="font-bold text-chalk-700">{acceleration.toFixed(2)} m/s²</span>
         </p>
       </div>
     </div>

@@ -11,16 +11,18 @@ export default function SimulationScreenView({ screen, onNext }: Props) {
   return (
     <div className="flex flex-col gap-5 py-4">
       <div>
-        <h2 className="text-xl font-semibold text-slate-900 sm:text-2xl">{screen.title}</h2>
-        <div className="mt-2 flex items-start gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
-          <AdjustmentsHorizontalIcon className="mt-0.5 h-4 w-4 shrink-0" />
+        <h2 className="font-display text-xl font-bold text-wood-800 sm:text-2xl">
+          {screen.title}
+        </h2>
+        <div className="mt-2 flex items-start gap-2 rounded-2xl border-2 border-wood-200 bg-wood-50 p-3 text-sm font-semibold text-wood-700">
+          <AdjustmentsHorizontalIcon className="mt-0.5 h-4 w-4 shrink-0 text-wood-500" />
           <span>{screen.instructions}</span>
         </div>
       </div>
       <Component />
       <button
         onClick={onNext}
-        className="self-center rounded-full bg-sky-600 px-8 py-3 font-medium text-white shadow-sm transition hover:bg-sky-700 active:scale-95"
+        className="self-center rounded-full bg-chalk-500 px-8 py-3 font-display text-lg font-bold text-white shadow-[0_4px_0_0_var(--color-chalk-700)] transition active:translate-y-1 active:shadow-none"
       >
         Entendi, continuar
       </button>
