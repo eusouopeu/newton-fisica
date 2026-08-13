@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 
 interface MotionTrackProps {
   /** Posição (m) ao longo da pista em função do tempo (s). Pode ser negativa. */
@@ -16,6 +17,7 @@ export default function MotionTrack({ distanceAt, duration, icon, trackLabel }: 
   const iconRef = useRef<HTMLDivElement>(null)
   const rafRef = useRef<number | undefined>(undefined)
   const startRef = useRef<number>(0)
+  const reducedMotion = usePrefersReducedMotion()
 
   const range = useMemo(() => {
     let max = 0.5
@@ -27,6 +29,13 @@ export default function MotionTrack({ distanceAt, duration, icon, trackLabel }: 
   }, [distanceAt, duration])
 
   useEffect(() => {
+    if (reducedMotion) {
+      // Sem loop contínuo: mostra a posição final do ciclo, parada.
+      const pct = Math.max(-1, Math.min(1, distanceAt(duration) / range))
+      if (iconRef.current) iconRef.current.style.left = `${50 + pct * 44}%`
+      return
+    }
+
     startRef.current = performance.now()
 
     function tick(now: number) {
@@ -42,7 +51,7 @@ export default function MotionTrack({ distanceAt, duration, icon, trackLabel }: 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [distanceAt, duration, range])
+  }, [distanceAt, duration, range, reducedMotion])
 
   return (
     <div className="relative h-16 w-full overflow-hidden rounded-2xl bg-chalk-50">

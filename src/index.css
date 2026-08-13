@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @font-face {
   font-family: "Baloo 2";
   font-style: normal;
@@ -81,6 +83,69 @@ body {
   font-family: var(--font-sans);
   background-color: var(--color-paper-100);
   color: var(--color-wood-800);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Modo escuro: sobrescreve os tokens de cor usados nas classes utilitárias
+   (bg-paper-100, text-wood-800, etc.) — não requer variantes dark: em cada componente. */
+.dark {
+  --color-chalk-50: #16261c;
+  --color-chalk-100: #1c3325;
+  --color-chalk-200: #234431;
+  --color-chalk-300: #2e5b40;
+  --color-chalk-400: #4a9068;
+  --color-chalk-500: #52a578;
+  --color-chalk-600: #3f8560;
+  --color-chalk-700: #2f6a4b;
+  --color-chalk-800: #1f4231;
+  --color-chalk-900: #1a3628;
+
+  --color-paper-50: #262c23;
+  --color-paper-100: #181d17;
+  --color-paper-200: #262c23;
+  --color-paper-300: #34392f;
+  --color-paper-400: #4a4f40;
+  --color-paper-500: #6b6a55;
+  --color-paper-600: #8f8a6e;
+  --color-paper-700: #b3ab86;
+  --color-paper-800: #d6cca3;
+  --color-paper-900: #f3e9d3;
+
+  --color-wood-50: #241a10;
+  --color-wood-100: #3a2c1c;
+  --color-wood-200: #4f3d28;
+  --color-wood-300: #6b5636;
+  --color-wood-400: #9c6b3e;
+  --color-wood-500: #c99f6f;
+  --color-wood-600: #dcb98c;
+  --color-wood-700: #ead2ac;
+  --color-wood-800: #f5e9d1;
+  --color-wood-900: #faf4ec;
+
+  --color-amber-50: #2e2510;
+  --color-amber-100: #3d3115;
+  --color-amber-300: #b98d2f;
+  --color-amber-500: #d9a53a;
+  --color-amber-600: #e6b658;
+  --color-amber-700: #f0c988;
+
+  --color-emerald-50: #12291f;
+  --color-emerald-200: #1c4a37;
+  --color-emerald-400: #3fae7f;
+  --color-emerald-500: #4cc491;
+  --color-emerald-800: #a9ecce;
+
+  --color-rose-50: #2c1416;
+  --color-rose-200: #4a2124;
+  --color-rose-400: #d9636b;
+  --color-rose-500: #e17d84;
+  --color-rose-600: #e8949a;
+  --color-rose-700: #efabb0;
+  --color-rose-800: #f5c3c7;
+
+  --color-orange-500: #e6883a;
+
+  color-scheme: dark;
 }
 
 h1, h2, h3, .font-display {
@@ -129,4 +194,13 @@ h1, h2, h3, .font-display {
 
 .slider-track::-moz-range-track {
   background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

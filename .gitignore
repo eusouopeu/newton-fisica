@@ -27,8 +27,11 @@ dist-ssr
 ios/App/Pods
 ios/App/build
 ios/App/App/public
+ios/App/App/capacitor.config.json
 android/app/build
 android/build
 android/.gradle
 android/app/src/main/assets/public
 android/local.properties
+android/app/capacitor.build.gradle
+android/capacitor.settings.gradle

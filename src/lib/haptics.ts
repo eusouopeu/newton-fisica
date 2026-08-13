@@ -1,43 +1,30 @@
-import { Capacitor } from '@capacitor/core'
-import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
 import { loadSettings } from './settings'
 
 function enabled(): boolean {
-  return Capacitor.isNativePlatform() && loadSettings().hapticsEnabled
+  return typeof navigator !== 'undefined' && 'vibrate' in navigator && loadSettings().hapticsEnabled
+}
+
+function vibrate(pattern: number | number[]) {
+  if (!enabled()) return
+  try {
+    navigator.vibrate(pattern)
+  } catch {
+    // vibração indisponível neste navegador, ignora
+  }
 }
 
 export async function hapticSuccess() {
-  if (!enabled()) return
-  try {
-    await Haptics.notification({ type: NotificationType.Success })
-  } catch {
-    // haptics unavailable, ignore
-  }
+  vibrate([15, 30, 15])
 }
 
 export async function hapticError() {
-  if (!enabled()) return
-  try {
-    await Haptics.notification({ type: NotificationType.Error })
-  } catch {
-    // haptics unavailable, ignore
-  }
+  vibrate(80)
 }
 
 export async function hapticTap() {
-  if (!enabled()) return
-  try {
-    await Haptics.impact({ style: ImpactStyle.Light })
-  } catch {
-    // haptics unavailable, ignore
-  }
+  vibrate(10)
 }
 
 export async function hapticCelebrate() {
-  if (!enabled()) return
-  try {
-    await Haptics.impact({ style: ImpactStyle.Medium })
-  } catch {
-    // haptics unavailable, ignore
-  }
+  vibrate([20, 40, 20, 40, 30])
 }

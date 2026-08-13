@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Slider from './Slider'
 import FormulaTerm from './FormulaTerm'
 import { useActiveParam } from '../../hooks/useActiveParam'
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { hapticTap } from '../../lib/haptics'
 
 const F1_RANGE: [number, number] = [2, 15]
@@ -24,8 +25,19 @@ function BlockAnimation({ ux, uy, magnitude }: { ux: number; uy: number; magnitu
 
   const acceleration = magnitude / ASSUMED_MASS
   const sMax = 0.5 * acceleration * DURATION * DURATION
+  const reducedMotion = usePrefersReducedMotion()
 
   useEffect(() => {
+    if (reducedMotion) {
+      const px = ORIGIN.x + ux * MAX_TRAVEL_PX
+      const py = ORIGIN.y + uy * MAX_TRAVEL_PX
+      if (iconRef.current) {
+        iconRef.current.style.left = `${px}px`
+        iconRef.current.style.top = `${py}px`
+      }
+      return
+    }
+
     startRef.current = performance.now()
     function tick(now: number) {
       const elapsed = ((now - startRef.current) / 1000) % DURATION
@@ -43,7 +55,7 @@ function BlockAnimation({ ux, uy, magnitude }: { ux: number; uy: number; magnitu
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [ux, uy, acceleration, sMax])
+  }, [ux, uy, acceleration, sMax, reducedMotion])
 
   return (
     <div
@@ -93,7 +105,7 @@ export default function ForceVectors() {
 
   return (
     <div className="overflow-hidden rounded-3xl border-2 border-wood-200 bg-paper-50 shadow-[0_4px_0_0_var(--color-wood-200)]">
-      <div className="border-b-2 border-wood-100 bg-white p-4">
+      <div className="border-b-2 border-wood-100 bg-paper-50 p-4">
         <div className="relative h-52 w-full overflow-hidden rounded-2xl bg-chalk-50 sm:h-64">
           <svg
             className="absolute inset-0 h-full w-full"

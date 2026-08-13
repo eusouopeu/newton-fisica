@@ -36,7 +36,7 @@ export default function TopicPage() {
             <Link
               key={lesson.id}
               to={`/topic/${topic.id}/lesson/${lesson.id}`}
-              className="flex items-center gap-4 rounded-2xl border-2 border-wood-200 bg-white p-4 shadow-[0_3px_0_0_var(--color-wood-200)] transition hover:border-chalk-300 hover:-translate-y-0.5 hover:shadow-[0_5px_0_0_var(--color-chalk-300)]"
+              className="flex items-center gap-4 rounded-2xl border-2 border-wood-200 bg-paper-50 p-4 shadow-[0_3px_0_0_var(--color-wood-200)] transition hover:border-chalk-300 hover:-translate-y-0.5 hover:shadow-[0_5px_0_0_var(--color-chalk-300)]"
             >
               {completed ? (
                 <CheckCircleIcon className="h-9 w-9 shrink-0 text-amber-500" />

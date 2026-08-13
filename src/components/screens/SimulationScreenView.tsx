@@ -1,9 +1,18 @@
+import { Suspense } from 'react'
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/solid'
 import type { SimulationScreen } from '../../types'
 
 interface Props {
   screen: SimulationScreen
   onNext: () => void
+}
+
+function SimulationFallback() {
+  return (
+    <div className="flex h-64 w-full items-center justify-center rounded-3xl border-2 border-wood-200 bg-paper-50">
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-chalk-200 border-t-chalk-600" />
+    </div>
+  )
 }
 
 export default function SimulationScreenView({ screen, onNext }: Props) {
@@ -19,7 +28,9 @@ export default function SimulationScreenView({ screen, onNext }: Props) {
           <span>{screen.instructions}</span>
         </div>
       </div>
-      <Component />
+      <Suspense fallback={<SimulationFallback />}>
+        <Component />
+      </Suspense>
       <button
         onClick={onNext}
         className="self-center rounded-full bg-chalk-500 px-8 py-3 font-display text-lg font-bold text-white shadow-[0_4px_0_0_var(--color-chalk-700)] transition active:translate-y-1 active:shadow-none"

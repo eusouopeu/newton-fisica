@@ -1,5 +1,7 @@
+import { lazy } from 'react'
 import type { Topic } from '../../types'
-import PositionTimeMRUV from '../../components/simulations/PositionTimeMRUV'
+
+const PositionTimeMRUV = lazy(() => import('../../components/simulations/PositionTimeMRUV'))
 
 export const mruvTopic: Topic = {
   id: 'mruv',
@@ -61,6 +63,63 @@ export const mruvTopic: Topic = {
               ],
               explanation:
                 'Com a = 0, sobra x(t) = x₀ + v₀·t — exatamente a equação do Movimento Retilíneo Uniforme.',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'mruv-desaceleracao',
+      title: 'Quando a Aceleração Freia o Movimento',
+      description: 'O que acontece quando a aceleração tem sinal oposto ao da velocidade.',
+      screens: [
+        {
+          kind: 'question',
+          title: 'Frear é uma aceleração negativa ou nenhuma aceleração?',
+          prompt:
+            'Um carro anda para frente a 20 m/s e o motorista pisa no freio. A velocidade dele diminui até parar. Durante a freada, existe aceleração? Em que sentido?',
+          hint: 'Aceleração é variação de velocidade — não importa se a velocidade está aumentando ou diminuindo.',
+        },
+        {
+          kind: 'simulation',
+          title: 'Explore a desaceleração',
+          instructions:
+            'Deixe a velocidade inicial positiva e arraste a aceleração para valores negativos. Observe a curva subir cada vez mais devagar, atingir um pico e depois descer — esse pico é o instante em que a velocidade passa por zero.',
+          Component: PositionTimeMRUV,
+        },
+        {
+          kind: 'explanation',
+          title: 'Sinais opostos de v₀ e a significam desaceleração',
+          body: [
+            'Quando a aceleração tem o mesmo sinal da velocidade, o objeto ganha rapidez. Quando tem sinal oposto, o objeto perde rapidez — está freando.',
+            'Se a aceleração continuar agindo depois que a velocidade chega a zero, o objeto não fica parado: ele passa a se mover no sentido contrário, agora ganhando rapidez de novo.',
+            'No gráfico x(t), esse instante de velocidade zero é exatamente o topo (ou fundo) da parábola — o ponto onde a inclinação da curva é zero.',
+          ],
+          formula: 'v(t) = v₀ + a·t  ⟹  v = 0  quando  t = −v₀/a',
+        },
+        {
+          kind: 'quiz',
+          title: 'Mini-quiz',
+          questions: [
+            {
+              prompt: 'Um objeto tem v₀ = 4 m/s e a = −2 m/s². O que acontece com ele ao longo do tempo?',
+              options: [
+                { id: 'a', label: 'Acelera cada vez mais rápido para frente', correct: false },
+                { id: 'b', label: 'Freia, para, e depois passa a andar para trás', correct: true },
+                { id: 'c', label: 'Mantém velocidade constante', correct: false },
+              ],
+              explanation:
+                'Com a de sinal oposto a v₀, a velocidade diminui até zero e depois muda de sinal — o objeto reverte o sentido do movimento.',
+            },
+            {
+              prompt: 'No gráfico x(t) de um movimento que freia e depois inverte o sentido, o ponto de velocidade zero corresponde a...',
+              options: [
+                { id: 'a', label: 'Onde a curva cruza o eixo t', correct: false },
+                { id: 'b', label: 'O vértice (topo ou fundo) da parábola', correct: true },
+                { id: 'c', label: 'O início do gráfico', correct: false },
+              ],
+              explanation:
+                'No vértice da parábola a inclinação instantânea é zero — e a inclinação do gráfico x(t) é a velocidade.',
             },
           ],
         },

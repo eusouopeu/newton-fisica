@@ -55,7 +55,7 @@ export default function NewtonSecondLaw() {
 
   return (
     <div className="overflow-hidden rounded-3xl border-2 border-wood-200 bg-paper-50 shadow-[0_4px_0_0_var(--color-wood-200)]">
-      <div className="border-b-2 border-wood-100 bg-white p-4">
+      <div className="border-b-2 border-wood-100 bg-paper-50 p-4">
         <div className="flex h-24 items-center justify-center gap-1 overflow-x-auto">
           <svg
             width={Math.max(260, boxSize + arrowLength + 60)}
@@ -120,7 +120,7 @@ export default function NewtonSecondLaw() {
         </div>
       </div>
 
-      <div className="border-b-2 border-wood-100 bg-white p-4">
+      <div className="border-b-2 border-wood-100 bg-paper-50 p-4">
         <div className="flex flex-col gap-3">
           <MotionTrack distanceAt={distanceAt} duration={DURATION} icon="📦" trackLabel="movimento em tempo real" />
           <div className="h-52 w-full sm:h-64 lg:h-72">

@@ -11,6 +11,7 @@ import {
 import Slider from './Slider'
 import FormulaTerm from './FormulaTerm'
 import { useActiveParam } from '../../hooks/useActiveParam'
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { hapticTap } from '../../lib/haptics'
 
 const DURATION = 3
@@ -30,8 +31,19 @@ function RampAnimation({ angleDeg, sAt, sMax }: { angleDeg: number; sAt: (t: num
   const rafRef = useRef<number | undefined>(undefined)
   const startRef = useRef(0)
   const rad = (angleDeg * Math.PI) / 180
+  const reducedMotion = usePrefersReducedMotion()
 
   useEffect(() => {
+    if (reducedMotion) {
+      const px = RAMP_ORIGIN.x + RAMP_LENGTH_PX * Math.cos(rad)
+      const py = RAMP_ORIGIN.y + RAMP_LENGTH_PX * Math.sin(rad)
+      if (iconRef.current) {
+        iconRef.current.style.left = `${px}px`
+        iconRef.current.style.top = `${py}px`
+      }
+      return
+    }
+
     startRef.current = performance.now()
     function tick(now: number) {
       const elapsed = ((now - startRef.current) / 1000) % DURATION
@@ -49,7 +61,7 @@ function RampAnimation({ angleDeg, sAt, sMax }: { angleDeg: number; sAt: (t: num
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [rad, sAt, sMax])
+  }, [rad, sAt, sMax, reducedMotion])
 
   const endX = RAMP_ORIGIN.x + RAMP_LENGTH_PX * Math.cos(rad)
   const endY = RAMP_ORIGIN.y + RAMP_LENGTH_PX * Math.sin(rad)
@@ -111,7 +123,7 @@ export default function InclinedPlane() {
 
   return (
     <div className="overflow-hidden rounded-3xl border-2 border-wood-200 bg-paper-50 shadow-[0_4px_0_0_var(--color-wood-200)]">
-      <div className="border-b-2 border-wood-100 bg-white p-4">
+      <div className="border-b-2 border-wood-100 bg-paper-50 p-4">
         <div className="flex flex-col gap-3">
           <RampAnimation angleDeg={angle} sAt={sAt} sMax={sMax} />
           <div className="h-52 w-full sm:h-64 lg:h-72">

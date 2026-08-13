@@ -15,6 +15,7 @@ export default function LessonPage() {
       key={lesson.id}
       topicId={topic.id}
       lesson={lesson}
+      topicLessonIds={topic.lessons.map((l) => l.id)}
       onBack={() => navigate(`/topic/${topic.id}`)}
     />
   )

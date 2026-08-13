@@ -1,5 +1,7 @@
+import { lazy } from 'react'
 import type { Topic } from '../../types'
-import PositionTimeMRU from '../../components/simulations/PositionTimeMRU'
+
+const PositionTimeMRU = lazy(() => import('../../components/simulations/PositionTimeMRU'))
 
 export const mruTopic: Topic = {
   id: 'mru',
@@ -61,6 +63,63 @@ export const mruTopic: Topic = {
               ],
               explanation:
                 'Com velocidade zero a posição não muda com o tempo, então o gráfico é uma reta horizontal em x = x₀.',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'mru-velocidade-e-sentido',
+      title: 'Velocidade Negativa e Sentido do Movimento',
+      description: 'O que o sinal da velocidade conta sobre a direção do movimento.',
+      screens: [
+        {
+          kind: 'question',
+          title: 'Velocidade negativa é o mesmo que estar parado?',
+          prompt:
+            'Um ciclista tem velocidade de −5 m/s. Ele está parado, andando devagar ou se movendo rápido? E para que lado?',
+          hint: 'O sinal de menos não indica "quantidade pequena" — pense no que ele indica em relação ao sentido escolhido como positivo.',
+        },
+        {
+          kind: 'simulation',
+          title: 'Explore velocidades negativas',
+          instructions:
+            'Arraste a velocidade para valores negativos. Veja a reta descer em vez de subir — o objeto se move no sentido oposto ao que foi definido como positivo, e quanto mais negativa a velocidade, mais rápido ele se afasta nesse sentido.',
+          Component: PositionTimeMRU,
+        },
+        {
+          kind: 'explanation',
+          title: 'O sinal indica sentido; o valor absoluto indica rapidez',
+          body: [
+            'Em uma trajetória retilínea, escolhemos um sentido como positivo. Velocidade positiva significa "andando nesse sentido"; negativa significa "andando no sentido oposto".',
+            'O módulo |v| é a rapidez do movimento — dois objetos com v = 6 m/s e v = −6 m/s têm a mesma rapidez, só que em sentidos opostos.',
+            'Por isso, no gráfico x(t), retas com inclinações de mesmo módulo e sinais opostos são "espelhadas": uma sobe, a outra desce na mesma proporção.',
+          ],
+          formula: 'x(t) = x₀ + v·t   (v < 0 ⇒ x diminui com o tempo)',
+        },
+        {
+          kind: 'quiz',
+          title: 'Mini-quiz',
+          questions: [
+            {
+              prompt: 'Um objeto parte de x₀ = −5 m com v = −3 m/s. Qual é sua posição em t = 4 s?',
+              options: [
+                { id: 'a', label: 'x = −17 m', correct: true },
+                { id: 'b', label: 'x = 7 m', correct: false },
+                { id: 'c', label: 'x = −5 m', correct: false },
+              ],
+              explanation:
+                'x(4) = x₀ + v·t = −5 + (−3)·4 = −5 − 12 = −17 m: o objeto continua se afastando no sentido negativo.',
+            },
+            {
+              prompt: 'No gráfico x(t), uma reta com inclinação negativa significa que o objeto...',
+              options: [
+                { id: 'a', label: 'Está acelerando', correct: false },
+                { id: 'b', label: 'Está se movendo no sentido negativo da trajetória', correct: true },
+                { id: 'c', label: 'Está parado', correct: false },
+              ],
+              explanation:
+                'Inclinação negativa é velocidade negativa: a posição diminui com o tempo, ou seja, o objeto se move no sentido oposto ao positivo.',
             },
           ],
         },

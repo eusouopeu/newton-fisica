@@ -7,13 +7,19 @@ import QuestionScreenView from './screens/QuestionScreenView'
 import SimulationScreenView from './screens/SimulationScreenView'
 import ExplanationScreenView from './screens/ExplanationScreenView'
 import QuizScreenView, { type WrongQuizAnswer } from './screens/QuizScreenView'
-import { awardPerfectBadge, getLessonProgress, updateLessonProgress } from '../lib/progress'
+import {
+  awardPerfectBadge,
+  checkTopicCompletion,
+  getLessonProgress,
+  updateLessonProgress,
+} from '../lib/progress'
 import { playComplete } from '../lib/sound'
 import { hapticCelebrate } from '../lib/haptics'
 
 interface Props {
   topicId: string
   lesson: Lesson
+  topicLessonIds: string[]
   onBack: () => void
 }
 
@@ -23,7 +29,7 @@ function initialScreenIndex(lessonId: string, total: number): number {
   return Math.min(saved.completedScreens, total - 1)
 }
 
-export default function LessonRunner({ topicId, lesson, onBack }: Props) {
+export default function LessonRunner({ topicId, lesson, topicLessonIds, onBack }: Props) {
   const total = lesson.screens.length
   const [screenIndex, setScreenIndex] = useState(() => initialScreenIndex(lesson.id, total))
   const [done, setDone] = useState(false)
@@ -40,6 +46,7 @@ export default function LessonRunner({ topicId, lesson, onBack }: Props) {
       awardPerfectBadge(lesson.id)
       setEarnedBadge(true)
     }
+    checkTopicCompletion(topicId, topicLessonIds)
     setDone(true)
   }
 

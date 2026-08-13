@@ -1,13 +1,36 @@
-import { useEffect } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import Home from './pages/Home'
-import TopicPage from './pages/TopicPage'
-import LessonPage from './pages/LessonPage'
-import { initStatusBar } from './lib/statusBar'
+import { applyThemeMode, loadSettings } from './lib/settings'
+import { loadProgress } from './lib/progress'
+import { maybeNotifyStreakReminder } from './lib/notifications'
+import ErrorBoundary from './components/ErrorBoundary'
+
+const TopicPage = lazy(() => import('./pages/TopicPage'))
+const LessonPage = lazy(() => import('./pages/LessonPage'))
+const FormulasPage = lazy(() => import('./pages/FormulasPage'))
+
+function RouteFallback() {
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center">
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-chalk-200 border-t-chalk-600" />
+    </div>
+  )
+}
 
 function App() {
   useEffect(() => {
-    void initStatusBar()
+    void maybeNotifyStreakReminder(loadProgress().lastActiveDate)
+  }, [])
+
+  useEffect(() => {
+    applyThemeMode(loadSettings().themeMode)
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const onChange = () => {
+      if (loadSettings().themeMode === 'system') applyThemeMode('system')
+    }
+    media.addEventListener('change', onChange)
+    return () => media.removeEventListener('change', onChange)
   }, [])
 
   return (
@@ -21,11 +44,16 @@ function App() {
           paddingRight: 'var(--safe-right)',
         }}
       >
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/topic/:topicId" element={<TopicPage />} />
-          <Route path="/topic/:topicId/lesson/:lessonId" element={<LessonPage />} />
-        </Routes>
+        <ErrorBoundary>
+          <Suspense fallback={<RouteFallback />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/formulas" element={<FormulasPage />} />
+              <Route path="/topic/:topicId" element={<TopicPage />} />
+              <Route path="/topic/:topicId/lesson/:lessonId" element={<LessonPage />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </div>
     </HashRouter>
   )

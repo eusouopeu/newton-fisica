@@ -80,7 +80,7 @@ export default function QuizScreenView({ screen, onNext }: Props) {
                   ? option.correct
                     ? 'border-emerald-400 bg-emerald-50 text-emerald-800 shadow-[0_3px_0_0_#6ee7b7]'
                     : 'border-rose-400 bg-rose-50 text-rose-800 shadow-[0_3px_0_0_#fca5a5]'
-                  : 'border-wood-200 bg-white text-wood-700 shadow-[0_3px_0_0_var(--color-wood-200)] hover:border-chalk-300 hover:bg-chalk-50'
+                  : 'border-wood-200 bg-paper-50 text-wood-700 shadow-[0_3px_0_0_var(--color-wood-200)] hover:border-chalk-300 hover:bg-chalk-50'
               } ${selectedId !== null && !isSelected ? 'opacity-50' : ''}`}
             >
               <span>{option.label}</span>

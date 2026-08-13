@@ -1,32 +1,38 @@
-# React + TypeScript + Vite
+# Newton — Física por simulação
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+PWA de ensino de Física (Cinemática e Dinâmica) com simulações interativas, quizzes e progresso salvo localmente. React + TypeScript + Vite + Tailwind.
 
-Currently, two official plugins are available:
+## Desenvolvimento
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Scripts
+
+- `npm run dev` — servidor de desenvolvimento
+- `npm run build` — typecheck + build de produção em `dist/`
+- `npm run lint` — Oxlint
+- `npm test` — testes (Vitest + Testing Library)
+- `npm run preview` — serve o build de produção localmente
+
+## Deploy
+
+O app é publicado como site estático no GitHub Pages via GitHub Actions
+(`.github/workflows/deploy.yml`), automaticamente a cada push em `main`.
+O roteamento usa `HashRouter`, então não é preciso configurar rewrites no
+servidor.
+
+Se o repositório for renomeado ou movido para outra conta, atualize o
+`base` em [vite.config.ts](vite.config.ts) para bater com o novo
+`https://<usuário>.github.io/<repositório>/`.
+
+## Testes
+
+```bash
+npm test
+```
+
+Cobre a lógica de progresso/streak/badges (`src/lib`) e o fluxo de uma
+lição (`LessonRunner`, `QuizScreenView`).
