@@ -1,4 +1,5 @@
 import { loadSettings } from './settings'
+import { getDueReviews } from './spacedReview'
 
 function supported(): boolean {
   return typeof window !== 'undefined' && 'Notification' in window
@@ -32,6 +33,37 @@ export async function maybeNotifyStreakReminder(lastActiveDate: string | null) {
   const icon = `${import.meta.env.BASE_URL}icons/icon-192.webp`
   const body = 'Faça uma lição rápida no Newton para manter sua sequência viva.'
   const title = 'Não perca sua sequência! 🔥'
+
+  try {
+    const registration = await navigator.serviceWorker?.getRegistration()
+    if (registration) {
+      await registration.showNotification(title, { body, icon })
+    } else {
+      new Notification(title, { body, icon })
+    }
+  } catch {
+    // notificações indisponíveis neste navegador, ignora
+  }
+}
+
+/**
+ * Notifica sobre lições vencidas para revisão espaçada. Mesma limitação da
+ * função acima: só dispara enquanto o app/aba está aberto, não é um alarme
+ * garantido em segundo plano.
+ */
+export async function maybeNotifyDueReviews() {
+  if (!supported() || Notification.permission !== 'granted') return
+  if (!loadSettings().remindersEnabled) return
+
+  const due = getDueReviews()
+  if (due.length === 0) return
+
+  const icon = `${import.meta.env.BASE_URL}icons/icon-192.webp`
+  const title = 'Hora de revisar! 🧠'
+  const body =
+    due.length === 1
+      ? `"${due[0].lessonTitle}" está pedindo uma revisão rápida.`
+      : `${due.length} lições estão pedindo uma revisão rápida.`
 
   try {
     const registration = await navigator.serviceWorker?.getRegistration()

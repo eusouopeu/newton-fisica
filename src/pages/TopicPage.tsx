@@ -1,7 +1,13 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
-import { ArrowLeftIcon, CheckCircleIcon, PlayCircleIcon, StarIcon } from '@heroicons/react/24/solid'
-import { getTopic } from '../data/topics'
-import { loadProgress } from '../lib/progress'
+import {
+  AcademicCapIcon,
+  ArrowLeftIcon,
+  CheckCircleIcon,
+  PlayCircleIcon,
+  StarIcon,
+} from '@heroicons/react/24/solid'
+import { getTopic, getTopicReviewQuestions } from '../data/topics'
+import { loadProgress, reviewBadgeId } from '../lib/progress'
 
 export default function TopicPage() {
   const { topicId } = useParams()
@@ -10,6 +16,10 @@ export default function TopicPage() {
   if (!topic) return <Navigate to="/" replace />
 
   const progress = loadProgress()
+  const allLessonsComplete =
+    topic.lessons.length > 0 && topic.lessons.every((l) => progress.lessons[l.id]?.completed)
+  const hasReviewQuestions = getTopicReviewQuestions(topic).length > 0
+  const hasReviewBadge = progress.badges.includes(reviewBadgeId(topic.id))
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 pb-16 pt-6 lg:max-w-3xl">
@@ -61,6 +71,24 @@ export default function TopicPage() {
           )
         })}
       </div>
+
+      {allLessonsComplete && hasReviewQuestions && (
+        <Link
+          to={`/topic/${topic.id}/review`}
+          className="flex items-center gap-4 rounded-2xl border-2 border-chalk-300 bg-chalk-50 p-4 shadow-[0_3px_0_0_var(--color-chalk-200)] transition hover:-translate-y-0.5"
+        >
+          <AcademicCapIcon className="h-9 w-9 shrink-0 text-chalk-600" />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <h3 className="font-display font-bold text-wood-800">Quiz de revisão do tópico</h3>
+              {hasReviewBadge && <StarIcon className="h-4 w-4 shrink-0 text-amber-500" />}
+            </div>
+            <p className="text-sm font-medium text-wood-500">
+              Revise todas as perguntas de "{topic.title}" em um só quiz.
+            </p>
+          </div>
+        </Link>
+      )}
     </div>
   )
 }

@@ -34,17 +34,35 @@ const fakeLesson: Lesson = {
   ],
 }
 
+const lessonWithProblem: Lesson = {
+  id: 'problem-lesson',
+  title: 'Lição com Problema',
+  description: 'Lição para testar a tela de problema.',
+  screens: [
+    {
+      kind: 'problem',
+      title: 'Resolva',
+      prompt: 'Quanto é 4 + 4?',
+      givens: [],
+      answer: 8,
+      unit: '',
+      tolerance: 0,
+      steps: ['Some 4 + 4.'],
+    },
+  ],
+}
+
 beforeEach(() => {
   localStorage.clear()
 })
 
-function renderRunner(onBack = vi.fn()) {
+function renderRunner(lesson: Lesson = fakeLesson, onBack = vi.fn()) {
   return render(
     <MemoryRouter>
       <LessonRunner
         topicId="topico-teste"
-        lesson={fakeLesson}
-        topicLessonIds={['test-lesson']}
+        lesson={lesson}
+        topicLessonIds={[lesson.id]}
         onBack={onBack}
       />
     </MemoryRouter>,
@@ -97,5 +115,27 @@ describe('LessonRunner', () => {
     await user.click(screen.getByRole('button', { name: 'Concluir lição' }))
 
     expect(loadProgress().lessons['test-lesson'].completed).toBe(true)
+  })
+})
+
+describe('LessonRunner — problem screen', () => {
+  it('reveals a hint after a wrong answer, then completes on the right one', async () => {
+    const user = userEvent.setup()
+    renderRunner(lessonWithProblem)
+
+    await user.type(screen.getByPlaceholderText('Sua resposta'), '7')
+    await user.click(screen.getByRole('button', { name: 'Conferir' }))
+
+    expect(screen.getByText('Some 4 + 4.')).toBeInTheDocument()
+
+    await user.clear(screen.getByPlaceholderText('Sua resposta'))
+    await user.type(screen.getByPlaceholderText('Sua resposta'), '8')
+    await user.click(screen.getByRole('button', { name: 'Conferir' }))
+
+    expect(screen.getByText(/Isso mesmo/)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Continuar' }))
+
+    expect(screen.getByText('Lição concluída!')).toBeInTheDocument()
+    expect(loadProgress().lessons['problem-lesson'].completed).toBe(true)
   })
 })

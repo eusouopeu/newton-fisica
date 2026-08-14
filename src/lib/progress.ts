@@ -20,6 +20,10 @@ export function topicCompleteBadgeId(topicId: string): string {
   return `topic-${topicId}-complete`
 }
 
+export function reviewBadgeId(topicId: string): string {
+  return `review-${topicId}`
+}
+
 export function streakBadgeId(days: number): string {
   return `streak-${days}`
 }
@@ -119,6 +123,14 @@ export function checkTopicCompletion(topicId: string, lessonIds: string[]): Prog
   const allDone = lessonIds.every((id) => state.lessons[id]?.completed)
   if (!allDone) return state
   const next = awardBadge(state, topicCompleteBadgeId(topicId))
+  if (next !== state) saveProgress(next)
+  return next
+}
+
+/** Concede a medalha de "quiz de revisão" de um tópico. */
+export function awardReviewBadge(topicId: string): ProgressState {
+  const state = loadProgress()
+  const next = awardBadge(state, reviewBadgeId(topicId))
   if (next !== state) saveProgress(next)
   return next
 }

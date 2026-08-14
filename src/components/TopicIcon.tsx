@@ -1,6 +1,8 @@
 import {
   ArrowTrendingUpIcon,
   ArrowsPointingOutIcon,
+  ArrowsRightLeftIcon,
+  BoltIcon,
   HandRaisedIcon,
   PresentationChartLineIcon,
   RocketLaunchIcon,
@@ -17,6 +19,8 @@ const ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   'arrows-pointing-out': ArrowsPointingOutIcon,
   triangle: Squares2X2Icon,
   'hand-raised': HandRaisedIcon,
+  bolt: BoltIcon,
+  'arrows-right-left': ArrowsRightLeftIcon,
 }
 
 export default function TopicIcon({ icon, className }: { icon: string; className?: string }) {

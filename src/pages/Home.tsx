@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 import {
   ArrowDownTrayIcon,
   ArrowUpTrayIcon,
+  BeakerIcon,
   BellIcon,
   BellSlashIcon,
   BookOpenIcon,
+  ClockIcon,
   FireIcon,
   LockClosedIcon,
   MoonIcon,
@@ -19,6 +21,7 @@ import {
 } from '@heroicons/react/24/solid'
 import { topics } from '../data/topics'
 import { exportProgress, importProgress, loadProgress, type ProgressState } from '../lib/progress'
+import { getDueReviews, type DueReview } from '../lib/spacedReview'
 import {
   applyThemeMode,
   loadSettings,
@@ -42,6 +45,12 @@ function badgeLabel(badgeId: string): string {
     return topic ? `${topic.title} completo` : 'Tópico completo'
   }
 
+  const reviewMatch = badgeId.match(/^review-(.+)$/)
+  if (reviewMatch) {
+    const topic = topics.find((t) => t.id === reviewMatch[1])
+    return topic ? `Revisão de ${topic.title}` : 'Revisão concluída'
+  }
+
   for (const topic of topics) {
     const lesson = topic.lessons.find((l) => l.id === badgeId)
     if (lesson) return `${lesson.title}: sem erros`
@@ -56,10 +65,12 @@ export default function Home() {
   const [importError, setImportError] = useState<string | null>(null)
   const [shareCopied, setShareCopied] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(() => !hasSeenOnboarding())
+  const [dueReviews, setDueReviews] = useState<DueReview[]>(() => getDueReviews())
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setProgress(loadProgress())
+    setDueReviews(getDueReviews())
   }, [])
 
   useEffect(() => {
@@ -167,6 +178,14 @@ export default function Home() {
           >
             <BookOpenIcon className="h-5 w-5" />
           </Link>
+          <Link
+            to="/lab"
+            aria-label="Laboratório livre"
+            title="Laboratório livre"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-chalk-700 text-chalk-100 hover:bg-chalk-800"
+          >
+            <BeakerIcon className="h-5 w-5" />
+          </Link>
           <button
             onClick={cycleTheme}
             aria-label={`Tema: ${settings.themeMode === 'system' ? 'automático' : settings.themeMode === 'dark' ? 'escuro' : 'claro'}. Tocar para trocar.`}
@@ -246,6 +265,27 @@ export default function Home() {
         />
         {importError && <p className="w-full text-xs font-semibold text-rose-600">{importError}</p>}
       </section>
+
+      {dueReviews.length > 0 && (
+        <section className="flex flex-col gap-3 rounded-2xl border-2 border-chalk-300 bg-chalk-50 p-4">
+          <h2 className="flex items-center gap-1.5 font-display text-sm font-bold uppercase tracking-wide text-chalk-700">
+            <ClockIcon className="h-4 w-4" />
+            Hora de revisar
+          </h2>
+          <div className="flex flex-col gap-2">
+            {dueReviews.map((review) => (
+              <Link
+                key={review.lessonId}
+                to={`/topic/${review.topicId}/lesson/${review.lessonId}`}
+                className="flex items-center justify-between rounded-xl border-2 border-chalk-200 bg-white px-3 py-2 text-sm font-semibold text-wood-700 hover:border-chalk-400"
+              >
+                <span>{review.lessonTitle}</span>
+                <span className="text-xs font-bold text-wood-400">{review.topicTitle}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {progress.badges.length > 0 && (
         <section className="flex flex-col gap-3">

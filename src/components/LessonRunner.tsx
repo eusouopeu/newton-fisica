@@ -7,12 +7,14 @@ import QuestionScreenView from './screens/QuestionScreenView'
 import SimulationScreenView from './screens/SimulationScreenView'
 import ExplanationScreenView from './screens/ExplanationScreenView'
 import QuizScreenView, { type WrongQuizAnswer } from './screens/QuizScreenView'
+import ProblemScreenView, { type WrongProblemAttempt } from './screens/ProblemScreenView'
 import {
   awardPerfectBadge,
   checkTopicCompletion,
   getLessonProgress,
   updateLessonProgress,
 } from '../lib/progress'
+import { scheduleNextReview } from '../lib/spacedReview'
 import { playComplete } from '../lib/sound'
 import { hapticCelebrate } from '../lib/haptics'
 
@@ -47,6 +49,7 @@ export default function LessonRunner({ topicId, lesson, topicLessonIds, onBack }
       setEarnedBadge(true)
     }
     checkTopicCompletion(topicId, topicLessonIds)
+    scheduleNextReview(lesson.id)
     setDone(true)
   }
 
@@ -59,6 +62,17 @@ export default function LessonRunner({ topicId, lesson, topicLessonIds, onBack }
     } else {
       setScreenIndex(nextIndex)
     }
+  }
+
+  function handleProblemNext(wrongAttempts: WrongProblemAttempt[]) {
+    handleNext(
+      wrongAttempts.map((a) => ({
+        prompt: a.prompt,
+        chosenLabel: a.chosenValue,
+        correctLabel: a.correctValue,
+        explanation: 'Confira as dicas reveladas durante o problema.',
+      })),
+    )
   }
 
   if (done) {
@@ -134,6 +148,9 @@ export default function LessonRunner({ topicId, lesson, topicLessonIds, onBack }
         <ExplanationScreenView screen={screen} onNext={() => handleNext()} />
       )}
       {screen.kind === 'quiz' && <QuizScreenView screen={screen} onNext={handleNext} />}
+      {screen.kind === 'problem' && (
+        <ProblemScreenView screen={screen} onNext={handleProblemNext} />
+      )}
     </div>
   )
 }

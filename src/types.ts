@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react'
 
-export type ScreenKind = 'question' | 'simulation' | 'explanation' | 'quiz'
+export type ScreenKind = 'question' | 'simulation' | 'explanation' | 'quiz' | 'problem'
 
 export interface QuizOption {
   id: string
@@ -41,11 +41,29 @@ export interface QuizScreen {
   questions: QuizQuestion[]
 }
 
+export interface ProblemGiven {
+  label: string
+  value: string
+}
+
+export interface ProblemScreen {
+  kind: 'problem'
+  title: string
+  prompt: string
+  givens: ProblemGiven[]
+  answer: number
+  unit: string
+  tolerance: number
+  /** Dicas reveladas progressivamente a cada tentativa errada. */
+  steps: string[]
+}
+
 export type LessonScreen =
   | QuestionScreen
   | SimulationScreen
   | ExplanationScreen
   | QuizScreen
+  | ProblemScreen
 
 export interface Lesson {
   id: string

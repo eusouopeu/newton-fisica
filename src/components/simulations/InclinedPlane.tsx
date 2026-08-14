@@ -98,10 +98,17 @@ export default function InclinedPlane() {
   const [active, markActive] = useActiveParam()
   const dataRef = useRef<{ t: number; v: number }[]>([])
 
+  const [compareMode, setCompareMode] = useState(false)
+  const [angleB, setAngleB] = useState(15)
+  const [massB, setMassB] = useState(5)
+
   const rad = (angle * Math.PI) / 180
   const acceleration = G * Math.sin(rad)
   const normalForce = mass * G * Math.cos(rad)
   const weightAlongRamp = mass * G * Math.sin(rad)
+
+  const radB = (angleB * Math.PI) / 180
+  const accelerationB = G * Math.sin(radB)
 
   const data = useMemo(() => {
     const points = []
@@ -112,6 +119,21 @@ export default function InclinedPlane() {
     dataRef.current = points
     return points
   }, [acceleration])
+
+  const dataB = useMemo(() => {
+    if (!compareMode) return []
+    const points = []
+    for (let i = 0; i <= POINTS; i++) {
+      const t = (DURATION * i) / POINTS
+      points.push({ t: Number(t.toFixed(2)), vB: Number((accelerationB * t).toFixed(2)) })
+    }
+    return points
+  }, [accelerationB, compareMode])
+
+  const comparisonData = useMemo(
+    () => data.map((p, i) => ({ ...p, vB: dataB[i]?.vB })),
+    [data, dataB],
+  )
 
   const captureGhost = useCallback(() => {
     setGhostData(dataRef.current)
@@ -128,7 +150,7 @@ export default function InclinedPlane() {
           <RampAnimation angleDeg={angle} sAt={sAt} sMax={sMax} />
           <div className="h-52 w-full sm:h-64 lg:h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+              <LineChart data={compareMode ? comparisonData : data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e8dcc3" />
                 <XAxis
                   dataKey="t"
@@ -155,7 +177,7 @@ export default function InclinedPlane() {
                     fontFamily: 'Nunito Variable, sans-serif',
                   }}
                 />
-                {ghostData && (
+                {!compareMode && ghostData && (
                   <Line
                     data={ghostData}
                     type="monotone"
@@ -171,21 +193,70 @@ export default function InclinedPlane() {
                 <Line
                   type="monotone"
                   dataKey="v"
+                  name="Cenário A"
                   stroke="#2f6a4b"
                   strokeWidth={4}
                   dot={false}
                   isAnimationActive={false}
                 />
+                {compareMode && (
+                  <Line
+                    type="monotone"
+                    dataKey="vB"
+                    name="Cenário B"
+                    stroke="#c0392b"
+                    strokeWidth={4}
+                    strokeDasharray="6 4"
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                )}
               </LineChart>
             </ResponsiveContainer>
           </div>
-          {ghostData && (
+          {!compareMode && ghostData && (
             <p className="text-center text-xs font-semibold text-wood-400">
               Linha tracejada = valor antes do ajuste
             </p>
           )}
         </div>
       </div>
+
+      <div className="flex items-center justify-center border-b-2 border-wood-100 bg-paper-50 p-3">
+        <button
+          onClick={() => setCompareMode((v) => !v)}
+          className={`rounded-full px-4 py-1.5 text-sm font-bold transition ${
+            compareMode
+              ? 'bg-chalk-500 text-white shadow-[0_2px_0_0_var(--color-chalk-700)]'
+              : 'bg-paper-100 text-wood-500'
+          }`}
+        >
+          {compareMode ? 'Comparando dois cenários' : 'Comparar dois cenários'}
+        </button>
+      </div>
+
+      {compareMode && (
+        <div className="grid gap-5 border-b-2 border-wood-100 bg-chalk-50 p-5 sm:grid-cols-2">
+          <Slider
+            label="Cenário B — Ângulo (θ)"
+            value={angleB}
+            min={ANGLE_RANGE[0]}
+            max={ANGLE_RANGE[1]}
+            step={1}
+            unit="°"
+            onChange={setAngleB}
+          />
+          <Slider
+            label="Cenário B — Massa (m)"
+            value={massB}
+            min={MASS_RANGE[0]}
+            max={MASS_RANGE[1]}
+            step={1}
+            unit="kg"
+            onChange={setMassB}
+          />
+        </div>
+      )}
 
       <div className="grid gap-5 p-5 sm:grid-cols-2">
         <Slider
@@ -230,6 +301,13 @@ export default function InclinedPlane() {
           N = <FormulaTerm active={active === 'm'}>{mass}</FormulaTerm>·g·cos(θ) = {normalForce.toFixed(1)} N
           &nbsp;·&nbsp; P∥ = m·g·sen(θ) = {weightAlongRamp.toFixed(1)} N
         </p>
+        {compareMode && (
+          <p className="mt-1 font-mono text-xs font-bold text-rose-700">
+            Cenário B: a = g·sen({angleB}°) = {accelerationB.toFixed(2)} m/s²
+            {accelerationB !== acceleration &&
+              ` (${accelerationB > acceleration ? 'maior' : 'menor'} que o cenário A — o ângulo muda a aceleração, a massa não)`}
+          </p>
+        )}
       </div>
     </div>
   )

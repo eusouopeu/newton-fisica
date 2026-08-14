@@ -74,11 +74,25 @@ export default function ForceVectors() {
   const [angle, setAngle] = useState(60)
   const [active, markActive] = useActiveParam()
 
+  const [compareMode, setCompareMode] = useState(false)
+  const [f1B, setF1B] = useState(6)
+  const [f2B, setF2B] = useState(12)
+  const [angleB, setAngleB] = useState(120)
+
   const rad = (angle * Math.PI) / 180
   const rx = f1 + f2 * Math.cos(rad)
   const ry = f2 * Math.sin(rad)
   const magnitude = Math.sqrt(rx * rx + ry * ry)
   const directionDeg = (Math.atan2(ry, rx) * 180) / Math.PI
+
+  const radB = (angleB * Math.PI) / 180
+  const rxB = f1B + f2B * Math.cos(radB)
+  const ryB = f2B * Math.sin(radB)
+  const magnitudeB = Math.sqrt(rxB * rxB + ryB * ryB)
+  const resultantEndB = useMemo(
+    () => ({ x: ORIGIN.x + rxB * PX_PER_N, y: ORIGIN.y - ryB * PX_PER_N }),
+    [rxB, ryB],
+  )
 
   const ux = magnitude > 0 ? rx / magnitude : 0
   const uy = magnitude > 0 ? ry / magnitude : 0
@@ -121,6 +135,9 @@ export default function ForceVectors() {
               </marker>
               <marker id="arrow-r" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
                 <path d="M0,0 L8,4 L0,8 Z" fill="#c0392b" />
+              </marker>
+              <marker id="arrow-rb" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <path d="M0,0 L8,4 L0,8 Z" fill="#1d4ed8" />
               </marker>
             </defs>
 
@@ -177,13 +194,56 @@ export default function ForceVectors() {
                 />
               )
             })()}
+
+            {compareMode && (
+              <line
+                x1={ORIGIN.x}
+                y1={ORIGIN.y}
+                x2={resultantEndB.x}
+                y2={resultantEndB.y}
+                stroke="#1d4ed8"
+                strokeWidth={3.5}
+                strokeDasharray="2 3"
+                markerEnd="url(#arrow-rb)"
+              />
+            )}
           </svg>
           <BlockAnimation ux={ux} uy={uy} magnitude={magnitude} />
         </div>
         <p className="mt-2 text-center text-xs font-semibold text-wood-400">
-          Verde = F₁ · Marrom = F₂ · Vermelho tracejado = resultante (direção do movimento)
+          Verde = F₁ · Marrom = F₂ · Vermelho tracejado = resultante (cenário A)
+          {compareMode && ' · Azul pontilhado = resultante (cenário B)'}
         </p>
       </div>
+
+      <div className="flex items-center justify-center border-b-2 border-wood-100 bg-paper-50 p-3">
+        <button
+          onClick={() => setCompareMode((v) => !v)}
+          className={`rounded-full px-4 py-1.5 text-sm font-bold transition ${
+            compareMode
+              ? 'bg-chalk-500 text-white shadow-[0_2px_0_0_var(--color-chalk-700)]'
+              : 'bg-paper-100 text-wood-500'
+          }`}
+        >
+          {compareMode ? 'Comparando dois cenários' : 'Comparar dois cenários'}
+        </button>
+      </div>
+
+      {compareMode && (
+        <div className="grid gap-5 border-b-2 border-wood-100 bg-chalk-50 p-5 sm:grid-cols-3">
+          <Slider label="Cenário B — F₁" value={f1B} min={F1_RANGE[0]} max={F1_RANGE[1]} step={1} unit="N" onChange={setF1B} />
+          <Slider label="Cenário B — F₂" value={f2B} min={F2_RANGE[0]} max={F2_RANGE[1]} step={1} unit="N" onChange={setF2B} />
+          <Slider
+            label="Cenário B — Ângulo"
+            value={angleB}
+            min={ANGLE_RANGE[0]}
+            max={ANGLE_RANGE[1]}
+            step={15}
+            unit="°"
+            onChange={setAngleB}
+          />
+        </div>
+      )}
 
       <div className="grid gap-5 p-5 sm:grid-cols-2">
         <Slider
@@ -246,6 +306,13 @@ export default function ForceVectors() {
           <FormulaTerm active={active === 'angle'}>{angle}°</FormulaTerm>) = {rx.toFixed(1)} N &nbsp;·&nbsp; direção
           = {directionDeg.toFixed(0)}°
         </p>
+        {compareMode && (
+          <p className="mt-1 font-mono text-xs font-bold text-blue-700">
+            Cenário B: |R| = {magnitudeB.toFixed(1)} N
+            {magnitudeB !== magnitude &&
+              ` (${magnitudeB > magnitude ? 'maior' : 'menor'} que o cenário A)`}
+          </p>
+        )}
       </div>
     </div>
   )

@@ -3,12 +3,14 @@ import { HashRouter, Route, Routes } from 'react-router-dom'
 import Home from './pages/Home'
 import { applyThemeMode, loadSettings } from './lib/settings'
 import { loadProgress } from './lib/progress'
-import { maybeNotifyStreakReminder } from './lib/notifications'
+import { maybeNotifyDueReviews, maybeNotifyStreakReminder } from './lib/notifications'
 import ErrorBoundary from './components/ErrorBoundary'
 
 const TopicPage = lazy(() => import('./pages/TopicPage'))
 const LessonPage = lazy(() => import('./pages/LessonPage'))
 const FormulasPage = lazy(() => import('./pages/FormulasPage'))
+const TopicReviewPage = lazy(() => import('./pages/TopicReviewPage'))
+const LabPage = lazy(() => import('./pages/LabPage'))
 
 function RouteFallback() {
   return (
@@ -21,6 +23,7 @@ function RouteFallback() {
 function App() {
   useEffect(() => {
     void maybeNotifyStreakReminder(loadProgress().lastActiveDate)
+    void maybeNotifyDueReviews()
   }, [])
 
   useEffect(() => {
@@ -51,6 +54,8 @@ function App() {
               <Route path="/formulas" element={<FormulasPage />} />
               <Route path="/topic/:topicId" element={<TopicPage />} />
               <Route path="/topic/:topicId/lesson/:lessonId" element={<LessonPage />} />
+              <Route path="/topic/:topicId/review" element={<TopicReviewPage />} />
+              <Route path="/lab" element={<LabPage />} />
             </Routes>
           </Suspense>
         </ErrorBoundary>
